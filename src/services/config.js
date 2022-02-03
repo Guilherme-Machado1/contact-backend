@@ -1,21 +1,26 @@
 const axios = require('axios').default;
+const {token} = require('./token');
+token();
 require('dotenv').config();
 const BASE_URL = 'https://www.zohoapis.com/crm/v2/Contacts';
-axios.defaults.headers.common['Authorization'] = `Zoho-oauthtoken ${process.env.Zoho}`;
 
+//Store the contact in the Contact Module on Zoho
 exports.storeContact = async (contact) => {
   try {
-    await axios.post(BASE_URL, {
+    const response = await axios.post(BASE_URL, {
       data: [
         contact,
       ],
     });
+    const details = response.data.data[0];
+    return details;
   } catch (error) {
-    console.log(error);
+    throw new Error(error);
   }
 };
 
-exports.editContact = async (id, updatedContact) => {//TO-DO faltando resolver o problema dos ids diferentes para alteração
+//Update the contact in the Contact Module on Zoho
+exports.editContact = async (id, updatedContact) => {
   try {
     await axios.put(`${BASE_URL}/${id}`, {
       data: [
@@ -23,29 +28,33 @@ exports.editContact = async (id, updatedContact) => {//TO-DO faltando resolver o
       ],
     });
   } catch (error) {
-    console.log(error);
+    throw new Error(error);
   }
 };
 
+//Delete the contact in the Contact Module on Zoho
 exports.deleteContact = async (id) => {
   try {
     await axios.delete(`${BASE_URL}/${id}`);
   } catch (error) {
-    console.log(error);
+    throw new Error(error);
   }
 };
 
+//Get the list of contacts from Contact Module on Zoho
 exports.getListContact = async () => {
   try {
     const {data} = await axios.get(BASE_URL, {
       responseType: 'json'
     });
     return data;
+
   } catch (error) {
-    console.log(error);
+    throw new Error(error);
   }
 }
 
+//Get the specified contact by ID from Contact Module on Zoho
 exports.ShowID = async (id) => {
   try {
     const {data} = await axios.get(`${BASE_URL}/${id}`, {
@@ -53,6 +62,22 @@ exports.ShowID = async (id) => {
     });
     return data;
   } catch (error) {
-    console.log(error);
+    throw new Error(error);
   }
 }
+
+//Get all the contacts that was deleted from Contact Module on Zoho
+exports.getDeletedId = async () => {
+  try {
+    const {data} = await axios.get(`${BASE_URL}/deleted?type=all`, {
+      responseType: 'json'
+    });
+    const idZoho = data.data;
+    return idZoho;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
+
+
