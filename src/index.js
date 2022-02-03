@@ -12,7 +12,6 @@ mongoose.connect(
   { useNewUrlParser: true, useUnifiedTopology: true },
 )
   .then(() => {
-    console.log('Tamo conectado Doidão');
     app.listen(process.env.PORT, () => {
       console.log();
       console.log(`Escutando na ${process.env.PORT}`);
